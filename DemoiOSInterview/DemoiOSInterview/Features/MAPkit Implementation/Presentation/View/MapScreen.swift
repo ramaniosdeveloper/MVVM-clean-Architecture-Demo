@@ -7,27 +7,38 @@
 
 import SwiftUI
 import CoreLocation
+import MapKit
 
 struct MapScreen: View {
 
     @StateObject private var viewModel = AppContainer.makeMapViewModel()
 
-    @State private var source =
-        CLLocationCoordinate2D(latitude: 28.6139, longitude: 77.2090)
-
-    @State private var destination =
-        CLLocationCoordinate2D(latitude: 28.7041, longitude: 77.1025)
+    @State private var sourceText = ""
+    @State private var destinationText = ""
 
     var body: some View {
 
-        MapView(viewModel: viewModel)
-            .edgesIgnoringSafeArea(.all)
-            .onAppear {
+        VStack(spacing: 10) {
 
-                viewModel.fetchRoute(
-                    source: source,
-                    destination: destination
+            TextField("Enter Source", text: $sourceText)
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal)
+
+            TextField("Enter Destination", text: $destinationText)
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal)
+
+            Button("Find Route") {
+                viewModel.searchRoute(
+                    sourceQuery: sourceText,
+                    destinationQuery: destinationText
                 )
             }
+            .buttonStyle(.borderedProminent)
+
+            MapView(viewModel: viewModel)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .navigationTitle("Map Route")
     }
 }

@@ -117,7 +117,7 @@ struct ContentView: View {
                         password: password
                     )
                 case .mapView:
-                    MapView(viewModel: mapVM)
+                    MapScreen()
                 }
             }
         }
