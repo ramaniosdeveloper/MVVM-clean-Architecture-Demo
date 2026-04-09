@@ -14,10 +14,20 @@ struct ContentView: View {
     @StateObject private var userVM = AppContainer.makeUserViewModel()
     @StateObject private var imageVM = AppContainer.makeImageViewModel()
     @StateObject private var mobileAdsVM = AppContainer.makeMobileAdsViewModel()
-    @StateObject private var mapVM = AppContainer.makeMapViewModel()
+
+    @StateObject private var viewModel: ContentViewModel
 
     @State private var email = ""
     @State private var password = ""
+
+    init(coordinator: AppCoordinator) {
+        _viewModel = StateObject(
+            wrappedValue: ContentViewModel(
+                biometricManager: AppContainer.makeBiometricManager(),
+                coordinator: coordinator
+            )
+        )
+    }
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
@@ -25,7 +35,6 @@ struct ContentView: View {
             VStack(spacing: 20) {
 
                 Image(systemName: "applelogo")
-                    .imageScale(.large)
 
                 TextField("Enter Email", text: $email)
                     .textFieldStyle(.roundedBorder)
@@ -33,7 +42,6 @@ struct ContentView: View {
                 SecureField("Enter Password", text: $password)
                     .textFieldStyle(.roundedBorder)
 
-                // LOGIN BUTTON (same as before)
                 PrimaryButton(title: "Login") {
                     coordinator.goToDetailView()
                 }
@@ -51,12 +59,8 @@ struct ContentView: View {
                             }
                         }
                     } label: {
-                        HStack {
-                            Image(systemName: "person.3.fill")
-                            Text("Load Users")
-                        }
+                        Label("Load Users", systemImage: "person.3.fill")
                     }
-                    .disabled(userVM.isLoading)
 
                     // IMAGES
                     Button {
@@ -68,30 +72,21 @@ struct ContentView: View {
                             }
                         }
                     } label: {
-                        HStack {
-                            Image(systemName: "photo")
-                            Text("Load Images")
-                        }
+                        Label("Load Images", systemImage: "photo")
                     }
-                    .disabled(imageVM.isLoading)
 
                     // ADS
                     Button {
                         coordinator.goToMobileAdView()
                     } label: {
-                        HStack {
-                            Image(systemName: "megaphone.fill")
-                            Text("Show Ads")
-                        }
+                        Label("Show Ads", systemImage: "megaphone.fill")
                     }
-                    // maps
+
+                    // CLEAN CALL
                     Button {
-                        coordinator.goToMapView()
+                        viewModel.openMapWithBiometric()
                     } label: {
-                        HStack {
-                            Image(systemName: "map.fill")
-                            Text("maps")
-                        }
+                        Label("Maps (Biometric)", systemImage: "map.fill")
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -100,7 +95,6 @@ struct ContentView: View {
 
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
-
                 case .home:
                     HomeView(viewModel: userVM)
 
@@ -111,15 +105,17 @@ struct ContentView: View {
                     MobileAdView(viewModel: mobileAdsVM)
 
                 case .detailView:
-                    DetailView(
-                        name: "",
-                        email: email,
-                        password: password
-                    )
+                    DetailView(name: "", email: email, password: password)
+
                 case .mapView:
                     MapScreen()
                 }
             }
+        }
+        .alert("Authentication Error", isPresented: $viewModel.showAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.alertMessage ?? "")
         }
     }
 }

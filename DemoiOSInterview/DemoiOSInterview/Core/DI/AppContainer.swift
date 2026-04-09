@@ -35,11 +35,15 @@ final class AppContainer {
     }
     
     // MARK: - mapView
-    // MARK: - Map
     static func makeMapViewModel() -> MapViewModel {
         let repository = MapRepositoryImpl()
         let useCase = FetchRouteUseCaseImpl(repository: repository)
         return MapViewModel(fetchRouteUseCase: useCase )
+    }
+    
+    // MARK: - Biometric
+    static func makeBiometricManager() -> BiometricAuthenticating {
+        BiometricManager()
     }
 }
 

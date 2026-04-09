@@ -9,7 +9,7 @@ import Foundation
 
 actor URLSessionNetworkClient: NetworkClient  {
 
-    func request<T: Decodable>(_ endpoint: Endpoint) async throws -> T {
+      func request<T: Decodable>(_ endpoint: Endpoint) async throws -> T {
 
         let (data, response) = try await URLSession.shared.data(from: endpoint.url)
 

@@ -5,5 +5,7 @@
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511
 </string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We use Face ID to securely access the map feature.</string>
 </dict>
 </plist>

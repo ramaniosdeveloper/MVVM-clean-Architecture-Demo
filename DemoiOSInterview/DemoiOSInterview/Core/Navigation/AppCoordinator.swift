@@ -30,7 +30,6 @@ final class AppCoordinator: ObservableObject {
         path.append(AppRoute.images)
     }
 
-    
     func goToMobileAdView() {
         path.append(AppRoute.adView)
     }
