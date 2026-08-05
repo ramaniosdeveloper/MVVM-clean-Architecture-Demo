@@ -88,6 +88,19 @@ struct ContentView: View {
                     } label: {
                         Label("Maps (Biometric)", systemImage: "map.fill")
                     }
+                    
+                    // New data load
+                    Button {
+                        Task {
+                            await imageVM.loadImageData()
+
+                            if !imageVM.images.isEmpty {
+                                coordinator.goToImages()
+                            }
+                        }
+                    } label: {
+                        Label("Json data", systemImage: "photo")
+                    }
                 }
                 .listStyle(.insetGrouped)
             }
